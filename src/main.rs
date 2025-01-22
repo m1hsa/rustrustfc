@@ -59,8 +59,7 @@ fn main() {
     let time = ammount * materials[material] / furnances[furnance] / furnances_divisor;
 
     // string making
-    let remove_furnance_furnance =
-        format!("{}", if furnance != "furnance" { furnance } else { "" });
+    let remove_furnance_furnance = String::from(if furnance != "furnance" { furnance } else { "" });
 
     let mut furna = format!(
         "for {ammount} {material} in {furnances_divisor}{remove_furnance_furnance} furnance ",
