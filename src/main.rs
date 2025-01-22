@@ -20,11 +20,6 @@ fn main() {
     // args
     let args: Vec<String> = env::args().collect();
 
-    // test args
-    // for (arg, index) in args.iter().enumerate() {
-    //     println!("{}: {}", index, arg);
-    // }
-
     // error handling
     if args.len() < 4 {
         usage("Not enough arguments");
@@ -111,9 +106,6 @@ fn main() {
             (time % 3600.0 % 60.0).round()
         );
     }
-
-    // println!("Time: {} seconds", time);
-    // colored for colors
 }
 
 fn usage(error: &str) {
