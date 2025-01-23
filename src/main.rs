@@ -10,12 +10,12 @@ fn main() {
     materials.insert("metal", 2.0 / 3.0);
     materials.insert("hqm", 4.0 / 3.0);
 
-    let mut furnances: HashMap<&str, f32> = HashMap::new();
-    furnances.insert("furnance", 1.0 / 5.0);
-    furnances.insert("large", 1.0);
-    furnances.insert("electric", 1.0 / 3.0);
+    let mut furnaces: HashMap<&str, f32> = HashMap::new();
+    furnaces.insert("furnace", 1.0 / 5.0);
+    furnaces.insert("large", 1.0);
+    furnaces.insert("electric", 1.0 / 3.0);
 
-    let mut furnances_divisor: f32 = 1.0;
+    let mut furnaces_divisor: f32 = 1.0;
 
     // args
     let args: Vec<String> = env::args().collect();
@@ -25,10 +25,10 @@ fn main() {
         usage("Not enough arguments");
         return;
     } else if args.len() == 5 {
-        furnances_divisor = match args[4].parse() {
+        furnaces_divisor = match args[4].parse() {
             Ok(num) => num,
             Err(_) => {
-                usage("Invalid furnance_divisor");
+                usage("Invalid furnace_divisor");
                 return;
             }
         };
@@ -43,47 +43,46 @@ fn main() {
     };
 
     let material = args[2].as_str();
-    let furnance = args[3].as_str();
+    let furnace = args[3].as_str();
 
-    if !materials.contains_key(material) || !furnances.contains_key(furnance) {
-        usage("Invalid material or furnance");
+    if !materials.contains_key(material) || !furnaces.contains_key(furnace) {
+        usage("Invalid material or furnace");
         return;
     }
     // error handeling end
 
-    let time = ammount * materials[material] / furnances[furnance] / furnances_divisor;
+    let time = ammount * materials[material] / furnaces[furnace] / furnaces_divisor;
 
     // string making
-    let remove_furnance_furnance = String::from(if furnance != "furnance" { furnance } else { "" });
+    let remove_furnace_furnace = String::from(if furnace != "furnace" { furnace } else { "" });
 
-    let mut furna = format!(
-        "for {ammount} {material} in {furnances_divisor}{remove_furnance_furnance} furnance ",
-    );
+    let mut furna =
+        format!("for {ammount} {material} in {furnaces_divisor}{remove_furnace_furnace} furnace ",);
 
-    if furnances_divisor != 1.0 {
+    if furnaces_divisor != 1.0 {
         furna = format!(
             "{furna}s by {am_fr} {material} ",
-            am_fr = (ammount / furnances_divisor).round()
+            am_fr = (ammount / furnaces_divisor).round()
         );
 
-        if furnance == "electric" {
+        if furnace == "electric" {
             furna = format!(
                 "{furna}each and {t_fd} power total",
-                t_fd = (time / furnances_divisor).round()
+                t_fd = (time / furnaces_divisor).round()
             );
         } else {
             furna = format!(
                 "{furna}and {t_2} wood each or {t_df_2} wood total",
                 t_2 = (time / 2.0).round(),
-                t_df_2 = (time * furnances_divisor / 2.0).round()
+                t_df_2 = (time * furnaces_divisor / 2.0).round()
             );
         }
     } else {
         furna = format!("{furna}filled with ");
-        if furnance == "electric" {
+        if furnace == "electric" {
             furna = format!(
                 "{furna}{t_fd} power total",
-                t_fd = (time * furnances_divisor).round()
+                t_fd = (time * furnaces_divisor).round()
             );
         } else {
             furna = format!("{furna}{t_2} wood", t_2 = (time / 2.0).round());
@@ -111,11 +110,11 @@ fn main() {
 fn usage(error: &str) {
     let usage_string = format!(
         "{}, Usage ->
-        rustfc [ammount] [material] [furnance] [optional furnances]
+        rustfc [ammount] [material] [furnace] [optional furnaces]
         [ammount]: Number
         [material]: sulfur or metal or hqm
-        [furnance]: furnance or large or electric
-        [furnances]: Number of furnances",
+        [furnace]: furnace or large or electric
+        [furnaces]: Number of furnaces",
         error
     );
 
