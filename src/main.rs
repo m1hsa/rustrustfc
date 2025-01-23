@@ -5,15 +5,21 @@ fn main() {
     println!();
 
     // dicks
-    let mut materials: HashMap<&str, f32> = HashMap::new();
-    materials.insert("sulfur", 1.0 / 3.0);
-    materials.insert("metal", 2.0 / 3.0);
-    materials.insert("hqm", 4.0 / 3.0);
+    let materials: HashMap<&str, f32> = [
+        ("sulfur", 1.0 / 3.0),
+        ("metal", 2.0 / 3.0),
+        ("hqm", 4.0 / 3.0),
+    ]
+    .into_iter()
+    .collect();
 
-    let mut furnaces: HashMap<&str, f32> = HashMap::new();
-    furnaces.insert("furnace", 1.0 / 5.0);
-    furnaces.insert("large", 1.0);
-    furnaces.insert("electric", 1.0 / 3.0);
+    let furnaces: HashMap<&str, f32> = [
+        ("furnace", 1.0 / 5.0),
+        ("large", 1.0),
+        ("electric", 1.0 / 3.0),
+    ]
+    .into_iter()
+    .collect();
 
     let mut furnaces_divisor: f32 = 1.0;
 
