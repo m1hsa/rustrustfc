@@ -139,8 +139,6 @@ impl Config {
                     return Err(usage("Invalid furnace_divisor"));
                 }
             };
-        } else {
-            // let furnaces_divisor = 1.0;
         }
 
         let amount: f32 = match args[1].clone().parse() {
