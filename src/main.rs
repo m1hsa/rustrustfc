@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::env;
+use std::process;
 
 fn main() {
     println!();
@@ -21,74 +22,64 @@ fn main() {
     .into_iter()
     .collect();
 
-    let mut furnaces_divisor: f32 = 1.0;
-
     // args
     let args: Vec<String> = env::args().collect();
 
-    // error handling
-    if args.len() < 4 {
-        usage("Not enough arguments");
-        return;
-    } else if args.len() == 5 {
-        furnaces_divisor = match args[4].parse() {
-            Ok(num) => num,
-            Err(_) => {
-                usage("Invalid furnace_divisor");
-                return;
-            }
-        };
-    }
+    let config = Config::new(&args).unwrap_or_else(|err| {
+        println!("While parsing config error ocured: {err}");
+        process::exit(1);
+    });
 
-    let ammount: f32 = match args[1].parse() {
-        Ok(num) => num,
-        Err(_) => {
-            usage("Invalid ammount");
-            return;
-        }
-    };
-
-    let material = args[2].as_str();
-    let furnace = args[3].as_str();
-
-    if !materials.contains_key(material) || !furnaces.contains_key(furnace) {
+    // error handeling that i dont want to do in the Config::new
+    if !materials.contains_key(config.material.as_str())
+        || !furnaces.contains_key(config.furnace.as_str())
+    {
         usage("Invalid material or furnace");
         return;
     }
     // error handeling end
 
-    let time = ammount * materials[material] / furnaces[furnace] / furnaces_divisor;
+    let time = config.amount * materials[config.material.as_str()]
+        / furnaces[config.furnace.as_str()]
+        / config.furnaces_divisor;
 
     // string making
-    let remove_furnace_furnace = String::from(if furnace != "furnace" { furnace } else { "" });
+    let remove_furnace_furnace = String::from(if config.furnace != "furnace" {
+        config.furnace.as_str()
+    } else {
+        ""
+    });
 
-    let mut furna =
-        format!("for {ammount} {material} in {furnaces_divisor}{remove_furnace_furnace} furnace ",);
+    let mut furna = format!(
+        "for {} {} in {} {remove_furnace_furnace} furnace ",
+        config.amount, config.material, config.furnaces_divisor
+    );
 
-    if furnaces_divisor != 1.0 {
+    if config.furnaces_divisor != 1.0 {
         furna = format!(
-            "{furna}s by {am_fr} {material} ",
-            am_fr = (ammount / furnaces_divisor).round()
+            "{furna}s by {am_fr} {} ",
+            config.material,
+            am_fr = (config.amount / config.furnaces_divisor).round()
         );
 
-        if furnace == "electric" {
+        if config.furnace == "electric" {
             furna = format!(
                 "{furna}each and {t_fd} power total",
-                t_fd = (time / furnaces_divisor).round()
+                t_fd = (time / config.furnaces_divisor).round()
             );
         } else {
             furna = format!(
                 "{furna}and {t_2} wood each or {t_df_2} wood total",
                 t_2 = (time / 2.0).round(),
-                t_df_2 = (time * furnaces_divisor / 2.0).round()
+                t_df_2 = (time * config.furnaces_divisor / 2.0).round()
             );
         }
     } else {
         furna = format!("{furna}filled with ");
-        if furnace == "electric" {
+        if config.furnace == "electric" {
             furna = format!(
                 "{furna}{t_fd} power total",
-                t_fd = (time * furnaces_divisor).round()
+                t_fd = (time * config.furnaces_divisor).round()
             );
         } else {
             furna = format!("{furna}{t_2} wood", t_2 = (time / 2.0).round());
@@ -113,16 +104,60 @@ fn main() {
     }
 }
 
-fn usage(error: &str) {
+fn usage(error: &str) -> String {
     let usage_string = format!(
         "{}, Usage ->
-        rustfc [ammount] [material] [furnace] [optional furnaces]
-        [ammount]: Number
+        rustfc [amount] [material] [furnace] [optional furnaces]
+        [amount]: Number
         [material]: sulfur or metal or hqm
         [furnace]: furnace or large or electric
         [furnaces]: Number of furnaces",
         error
     );
 
-    println!("{}", usage_string);
+    // println!("{}", usage_string);
+    usage_string
+}
+
+struct Config {
+    amount: f32,
+    material: String,
+    furnace: String,
+    furnaces_divisor: f32,
+}
+
+impl Config {
+    fn new(args: &[String]) -> Result<Config, String> {
+        let mut furnaces_divisor = 1.0;
+
+        if args.len() < 4 {
+            return Err(usage("Not enough arguments"));
+        } else if args.len() == 5 {
+            furnaces_divisor = match args[4].parse() {
+                Ok(num) => num,
+                Err(_) => {
+                    return Err(usage("Invalid furnace_divisor"));
+                }
+            };
+        } else {
+            // let furnaces_divisor = 1.0;
+        }
+
+        let amount: f32 = match args[1].clone().parse() {
+            Ok(num) => num,
+            Err(_) => {
+                return Err(usage("Invalid amount"));
+            }
+        };
+
+        let material = args[2].clone();
+        let furnace = args[3].clone();
+
+        Ok(Config {
+            amount,
+            material,
+            furnace,
+            furnaces_divisor,
+        })
+    }
 }
