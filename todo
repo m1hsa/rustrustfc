@@ -1,0 +1,3 @@
+add flags like -s and this returns in stdout just time in seconds to burn
+also -w to wood or electricity
+or combined in json format
