@@ -28,7 +28,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let config = Config::new(&args).unwrap_or_else(|err| {
-        println!("While parsing config error ocured: {err}");
+        eprintln!("While parsing config error ocured: {err}");
         process::exit(1);
     });
 
@@ -36,7 +36,7 @@ fn main() {
     if !materials.contains_key(config.material.as_str())
         || !furnaces.contains_key(config.furnace.as_str())
     {
-        rustrustfc::usage("Invalid material or furnace");
+        eprintln!("{}", rustrustfc::usage("Invalid material or furnace"));
         process::exit(1);
     }
     // error handeling end
