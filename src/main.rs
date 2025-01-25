@@ -37,7 +37,7 @@ fn main() {
         || !furnaces.contains_key(config.furnace.as_str())
     {
         rustrustfc::usage("Invalid material or furnace");
-        return;
+        process::exit(1);
     }
     // error handeling end
 
