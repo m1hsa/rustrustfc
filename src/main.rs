@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::env;
 use std::process;
 
+use rustrustfc::Config;
+
 fn main() {
     println!();
 
@@ -34,7 +36,7 @@ fn main() {
     if !materials.contains_key(config.material.as_str())
         || !furnaces.contains_key(config.furnace.as_str())
     {
-        usage("Invalid material or furnace");
+        rustrustfc::usage("Invalid material or furnace");
         return;
     }
     // error handeling end
@@ -101,61 +103,5 @@ fn main() {
             (time % 3600.0 / 60.0).floor(),
             (time % 3600.0 % 60.0).round()
         );
-    }
-}
-
-fn usage(error: &str) -> String {
-    let usage_string = format!(
-        "{}, Usage ->
-        rustfc [amount] [material] [furnace] [optional furnaces]
-        [amount]: Number
-        [material]: sulfur or metal or hqm
-        [furnace]: furnace or large or electric
-        [furnaces]: Number of furnaces",
-        error
-    );
-
-    // println!("{}", usage_string);
-    usage_string
-}
-
-struct Config {
-    amount: f32,
-    material: String,
-    furnace: String,
-    furnaces_divisor: f32,
-}
-
-impl Config {
-    fn new(args: &[String]) -> Result<Config, String> {
-        let mut furnaces_divisor = 1.0;
-
-        if args.len() < 4 {
-            return Err(usage("Not enough arguments"));
-        } else if args.len() == 5 {
-            furnaces_divisor = match args[4].parse() {
-                Ok(num) => num,
-                Err(_) => {
-                    return Err(usage("Invalid furnace_divisor"));
-                }
-            };
-        }
-
-        let amount: f32 = match args[1].clone().parse() {
-            Ok(num) => num,
-            Err(_) => {
-                return Err(usage("Invalid amount"));
-            }
-        };
-
-        let material = args[2].clone();
-        let furnace = args[3].clone();
-
-        Ok(Config {
-            amount,
-            material,
-            furnace,
-            furnaces_divisor,
-        })
     }
 }
